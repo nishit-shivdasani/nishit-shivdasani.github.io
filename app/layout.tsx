@@ -1,19 +1,20 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import { profile } from "@/lib/resume";
-import { SmoothScroll } from "@/components/SmoothScroll";
-import { Preloader } from "@/components/Preloader";
+import { Splash } from "@/components/site/Splash";
 import "./globals.css";
 
-const inter = Inter({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-space-grotesk",
   display: "swap",
 });
 
 const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-jetbrains",
+  weight: ["400", "500", "600"],
+  variable: "--font-jetbrains-mono",
   display: "swap",
 });
 
@@ -87,7 +88,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrains.variable}`}>
+    <html
+      lang="en"
+      className={`${spaceGrotesk.variable} ${jetbrains.variable}`}
+    >
       {/*
         Browser extensions (ColorZilla's cz-shortcut-listen, Grammarly's
         data-gr-*, …) write attributes onto <body> before React hydrates,
@@ -95,13 +99,29 @@ export default function RootLayout({
         it covers this element's own attributes only, so genuine mismatches
         inside the app still surface.
       */}
-      <body className="font-sans" suppressHydrationWarning>
+      <body suppressHydrationWarning>
+        {/*
+          Runs during parse, before the splash markup below it is reached, so a
+          session that has already seen the splash never paints it even for one
+          frame. Doing this in an effect instead would flash.
+
+          The flag goes on <body>, not <html>: writing it pre-hydration makes
+          the client DOM differ from the server HTML, and <body> is the element
+          already carrying suppressHydrationWarning. Putting it on <html> warns
+          on every load, and silencing that would mean suppressing <html>'s
+          attributes wholesale.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var k='ns-splash';if(sessionStorage.getItem(k))document.body.dataset.splash='seen';else sessionStorage.setItem(k,'1')}catch(e){}",
+          }}
+        />
+        <Splash />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
-        <Preloader />
-        <SmoothScroll />
         {children}
       </body>
     </html>

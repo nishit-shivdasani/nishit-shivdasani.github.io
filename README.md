@@ -2,8 +2,8 @@
 
 Source for my portfolio, live at **https://nishit-shivdasani.github.io**.
 
-Next.js 16 (App Router) + TypeScript + Tailwind CSS v4, compiled to a static
-export and published to GitHub Pages by GitHub Actions.
+Next.js 16 (App Router) + TypeScript, compiled to a static export and
+published to GitHub Pages by GitHub Actions.
 
 ## Stack
 
@@ -11,8 +11,8 @@ export and published to GitHub Pages by GitHub Actions.
 | --- | --- |
 | Framework | Next.js 16, App Router, `output: "export"` |
 | Language | TypeScript (strict) |
-| Styling | Tailwind CSS v4 (CSS-first `@theme`, no `tailwind.config`) |
-| Fonts | Inter + JetBrains Mono via `next/font/google` (self-hosted at build) |
+| Styling | Plain CSS — inline styles per element, `app/globals.css` for keyframes and hover states |
+| Fonts | Space Grotesk + JetBrains Mono via `next/font/google` (self-hosted at build) |
 | Hosting | GitHub Pages, deployed from `.github/workflows/deploy.yml` |
 
 No server runtime. The build emits plain HTML/CSS/JS into `out/`.
@@ -37,13 +37,18 @@ npm run serve    # serves ./out
 | --- | --- |
 | `app/layout.tsx` | Metadata, fonts, schema.org Person JSON-LD |
 | `app/page.tsx` | Section composition |
-| `app/globals.css` | Tailwind import + design tokens (`@theme`) |
-| `lib/resume.ts` | **All content lives here** — single source of truth |
-| `components/` | One component per section |
+| `app/globals.css` | Base document styles, keyframes, `.hv-*` hover classes |
+| `lib/resume.ts` | Identity facts for document metadata + JSON-LD |
+| `lib/site.ts` | Outbound URLs and nav items |
+| `components/site/` | One component per section; each owns its own copy |
+| `components/site/tokens.ts` | Palette and shared style objects |
+| `components/site/Effects.tsx` | Scroll progress, active nav, timeline draw, card tilt |
+| `public/assets/` | Company and university logos |
 | `public/` | Résumé PDF, `.nojekyll` |
 
-To update the site's content, edit `lib/resume.ts`. The components read from it;
-nothing else needs to change.
+The design is inline-style driven, so each section's copy and styling live in
+its own component. Links live in `lib/site.ts`; colours in
+`components/site/tokens.ts`.
 
 ## Deployment
 
@@ -91,6 +96,6 @@ Not configured yet. When the domain is registered:
 Deliberate trade-offs of `output: "export"`:
 
 - No Server Actions, Route Handlers, middleware, or ISR.
-- `next/image` runs with `unoptimized: true` — ship pre-sized images.
+- `next/image` runs with `unoptimized: true`; the page uses plain `<img>`.
 - Metadata routes (`sitemap.ts`, `robots.ts`) must set
   `export const dynamic = "force-static"`.
