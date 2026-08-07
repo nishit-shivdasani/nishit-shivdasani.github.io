@@ -1,25 +1,96 @@
 # nishit-shivdasani.github.io
 
-Source for my portfolio site, served by GitHub Pages at
-**https://nishit-shivdasani.github.io**.
+Source for my portfolio, live at **https://nishit-shivdasani.github.io**.
 
-Static HTML, CSS, and JavaScript — no build step, no dependencies. Pages
-serves the repository root directly, so `index.html` at the top level is the
-live site.
+Next.js 16 (App Router) + TypeScript + Tailwind CSS v4, compiled to a static
+export and published to GitHub Pages by GitHub Actions.
+
+## Stack
+
+| Concern | Choice |
+| --- | --- |
+| Framework | Next.js 16, App Router, `output: "export"` |
+| Language | TypeScript (strict) |
+| Styling | Tailwind CSS v4 (CSS-first `@theme`, no `tailwind.config`) |
+| Fonts | Inter + JetBrains Mono via `next/font/google` (self-hosted at build) |
+| Hosting | GitHub Pages, deployed from `.github/workflows/deploy.yml` |
+
+No server runtime. The build emits plain HTML/CSS/JS into `out/`.
+
+## Local development
+
+```bash
+npm install
+npm run dev      # http://localhost:3000
+```
+
+Build and preview exactly what ships:
+
+```bash
+npm run build    # writes ./out
+npm run serve    # serves ./out
+```
 
 ## Layout
 
 | Path | Purpose |
 | --- | --- |
-| `index.html` | The site |
-| `Nishit_Shivdasani_Resume.pdf` | Résumé, linked from the site |
+| `app/layout.tsx` | Metadata, fonts, schema.org Person JSON-LD |
+| `app/page.tsx` | Section composition |
+| `app/globals.css` | Tailwind import + design tokens (`@theme`) |
+| `lib/resume.ts` | **All content lives here** — single source of truth |
+| `components/` | One component per section |
+| `public/` | Résumé PDF, `.nojekyll` |
 
-## Local preview
+To update the site's content, edit `lib/resume.ts`. The components read from it;
+nothing else needs to change.
 
-No build step, so any static server works:
+## Deployment
 
-```bash
-python -m http.server 8000
-```
+Push to `main` → Actions builds and publishes. One-time repo setup:
 
-Then open http://localhost:8000.
+**Settings → Pages → Build and deployment → Source: `GitHub Actions`**
+
+Without that, Pages keeps serving the old branch-based site and the workflow's
+deploy step fails.
+
+## Custom domain
+
+Not configured yet. When the domain is registered:
+
+1. Create `public/CNAME` containing only the apex domain, e.g.:
+
+   ```
+   nishitshivdasani.com
+   ```
+
+   It must live in `public/` so the export copies it to `out/CNAME`.
+
+2. At the DNS registrar, for the apex (`@`) record add four `A` records:
+
+   ```
+   185.199.108.153
+   185.199.109.153
+   185.199.110.153
+   185.199.111.153
+   ```
+
+   (and the matching `AAAA` records if IPv6 is wanted:
+   `2606:50c0:8000::153`, `8001::153`, `8002::153`, `8003::153`)
+
+3. For `www`, add a `CNAME` record pointing to `nishit-shivdasani.github.io`.
+
+4. **Settings → Pages → Custom domain** — enter the domain, wait for the DNS
+   check to pass, then tick **Enforce HTTPS**.
+
+5. Update the hardcoded `siteUrl` in `app/layout.tsx`, `app/sitemap.ts`, and
+   `app/robots.ts` to the new domain.
+
+## Static export constraints
+
+Deliberate trade-offs of `output: "export"`:
+
+- No Server Actions, Route Handlers, middleware, or ISR.
+- `next/image` runs with `unoptimized: true` — ship pre-sized images.
+- Metadata routes (`sitemap.ts`, `robots.ts`) must set
+  `export const dynamic = "force-static"`.

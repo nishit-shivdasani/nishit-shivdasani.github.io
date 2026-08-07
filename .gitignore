@@ -1,1 +1,12 @@
-Nishit_Shivdasani_Resume.pdf
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+.env*
+!.env.example
+
+.DS_Store
+Thumbs.db
+.vercel
