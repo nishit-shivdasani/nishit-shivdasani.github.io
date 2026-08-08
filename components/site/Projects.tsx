@@ -3,10 +3,10 @@ import { GithubIcon } from "./Icons";
 import {
   C,
   MONO,
+  bandStyle,
   eyebrowStyle,
   headingStyle,
   sectionLeadStyle,
-  sectionStyle,
   tagStyleSm,
 } from "./tokens";
 
@@ -61,7 +61,7 @@ const REPOS: Repo[] = [
 
 export function Projects() {
   return (
-    <section id="projects" style={sectionStyle}>
+    <section id="projects" className="band band--wash" style={bandStyle}>
       <div data-reveal="" style={{ marginBottom: "clamp(24px,3vw,36px)" }}>
         <p style={eyebrowStyle}>04 — Open Source</p>
         <h2 style={{ ...headingStyle, margin: "10px 0 0" }}>

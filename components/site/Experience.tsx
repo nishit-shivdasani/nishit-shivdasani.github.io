@@ -1,9 +1,9 @@
 import {
   C,
   MONO,
+  bandStyle,
   eyebrowStyle,
   headingStyle,
-  sectionStyle,
   tagStyleSm,
 } from "./tokens";
 
@@ -76,7 +76,7 @@ const RAIL_LEFT =
 
 export function Experience() {
   return (
-    <section id="experience" style={sectionStyle}>
+    <section id="experience" className="band band--wash" style={bandStyle}>
       <div data-reveal="" style={{ marginBottom: "clamp(24px,3vw,36px)" }}>
         <p style={eyebrowStyle}>02 — Experience</p>
         <h2 style={{ ...headingStyle, margin: "10px 0 0" }}>

@@ -4,6 +4,13 @@ export const MONO = "var(--font-mono)";
 export const C = {
   paper: "#F4F3EE",
   paperAlt: "#EDEAE0",
+  /**
+   * Section band: 7% rust mixed into paper. Tinting toward the brand accent
+   * keeps it peachy and warm; the earlier khaki mid-beige (#E7E1D3) read as
+   * discolouration instead of design. Half that one's separation from paper,
+   * and white cards actually sit better on it than on paper.
+   */
+  wash: "#F0E9E2",
   white: "#FFFFFF",
   ink: "#2B2621",
   inkSoft: "#5C574D",
@@ -66,4 +73,14 @@ export const sectionLeadStyle: React.CSSProperties = {
 export const sectionStyle: React.CSSProperties = {
   padding: "clamp(44px,5.5vw,68px) 0",
   borderTop: `1px solid ${C.line}`,
+};
+
+/**
+ * A banded section. The rule disappears because the change of ground already
+ * separates it, and the padding grows a little so the band has room to read as
+ * a band rather than a stripe. Pair with `className="band band--wash"`, which
+ * paints the full-bleed background in globals.css.
+ */
+export const bandStyle: React.CSSProperties = {
+  padding: "clamp(52px,6vw,78px) 0",
 };
