@@ -148,6 +148,82 @@ a:hover {
   }
 }
 
+/* ---------------------------------------------------------------------------
+   Section bands.
+
+   The page sits in a max-width container, so a band has to break out of it to
+   reach the viewport edges. Same trick as the marquee: a pseudo-element pinned
+   to 100vw and centred. It goes behind the section's own content via z-index,
+   not by reordering, so nothing about the flow changes.
+
+   `100vw` includes the scrollbar, so a band overhangs by its width — that is
+   what `overflow-x: clip` on <html>/<body> is already there to trim.
+   --------------------------------------------------------------------------- */
+
+.band {
+  position: relative;
+  /* Contains the pseudo-element's z-index so it can't slip behind <body>. */
+  isolation: isolate;
+}
+
+.band::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.band--wash::before {
+  background: #f0e9e2;
+}
+
+/* A hairline where the band meets paper, so the edge is deliberate rather
+   than a soft smudge — the tint alone is gentle by design. */
+.band--wash::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 auto 0;
+  top: 0;
+  height: 1px;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  background: #e6dcd2;
+}
+
+/* ---------------------------------------------------------------------------
+   Resting card depth.
+
+   Every card was a flat 1px border, so nothing sat above anything else. This
+   adds lift without adding marks — the page already has plenty of line-work
+   (card borders, outlined chips, hairlines, the timeline rail) and more lines
+   would only compete with it.
+
+   Two layers on purpose: a tight 1px contact shadow reads as the card touching
+   the page, and a broad soft one reads as distance. One blur alone just looks
+   like a smudge. Tinted with the ink brown, never pure black, so it stays warm
+   against the paper.
+
+   Deliberately much weaker than the `:hover` shadows below, so hovering still
+   registers as a change.
+   --------------------------------------------------------------------------- */
+
+.hv-work,
+.hv-timeline-card,
+.hv-skill-card,
+.hv-project,
+.hv-education,
+.hv-beyond,
+.hv-stat {
+  box-shadow:
+    0 1px 2px rgba(43, 38, 33, 0.04),
+    0 6px 16px rgba(43, 38, 33, 0.045);
+}
+
 /* Skip link — off-screen until focused, so it costs the design nothing but
    saves keyboard users from tabbing the whole nav on every visit. */
 .skip-link {
@@ -491,7 +567,8 @@ body[data-splash="seen"] .splash {
   font-size: 10px;
   font-variant-numeric: tabular-nums;
   text-align: right;
-  color: #c4c0b2;
+  /* #C4C0B2 was only 1.82:1 on white — well under WCAG AA. This is 4.87:1. */
+  color: #767163;
   transition: color 0.2s ease;
 }
 

@@ -40,22 +40,17 @@ const CHANNELS: Channel[] = [
     note: "Weekdays, IST business hours",
     icon: <PhoneIcon />,
   },
-  {
-    href: links.github,
-    external: true,
-    label: "GitHub",
-    value: links.githubHandle,
-    note: "Code & packages",
-    icon: <GithubIcon size={18} />,
-  },
-  {
-    href: links.linkedin,
-    external: true,
-    label: "LinkedIn",
-    value: links.linkedinHandle,
-    note: "The professional one",
-    icon: <LinkedinIcon size={18} />,
-  },
+];
+
+/**
+ * GitHub and LinkedIn are already buttons in the hero, so giving them full
+ * 88px cards here repeated them for a third time and made the panel 200px
+ * taller than it needed to be. Kept as a compact row: same links, a fraction
+ * of the weight.
+ */
+const SOCIALS = [
+  { href: links.github, label: links.githubHandle, icon: <GithubIcon size={15} /> },
+  { href: links.linkedin, label: "LinkedIn", icon: <LinkedinIcon size={15} /> },
 ];
 
 const FACTS: [string, string][] = [
@@ -73,7 +68,7 @@ export function Contact() {
           position: "relative",
           background: C.ink,
           borderRadius: 22,
-          padding: "clamp(30px,5vw,54px)",
+          padding: "clamp(28px,4vw,44px)",
           overflow: "hidden",
         }}
       >
@@ -112,7 +107,12 @@ export function Contact() {
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,340px),1fr))",
             gap: "clamp(28px,4vw,48px)",
-            alignItems: "start",
+            /*
+             * The five contact channels make the right column much taller than
+             * the left. Top-aligning left a ~200px dead gap under the facts and
+             * made the panel read bottom-heavy; centring balances the two.
+             */
+            alignItems: "center",
           }}
         >
           <div>
@@ -144,11 +144,19 @@ export function Contact() {
             </p>
             <h2
               style={{
-                margin: "20px 0 0",
-                fontSize: "clamp(28px,4.2vw,46px)",
+                margin: "18px 0 0",
+                /*
+                 * Sits in a ~540px column, less than half the width the other
+                 * section headings get. At the design's 46px it wrapped to
+                 * three lines and stood 149px tall — 3x every other heading,
+                 * and larger than any type on the page bar the hero name.
+                 * Scaled to its column so it reads as a confident close rather
+                 * than a shout.
+                 */
+                fontSize: "clamp(24px,2.6vw,34px)",
                 fontWeight: 700,
-                letterSpacing: "-0.025em",
-                lineHeight: 1.08,
+                letterSpacing: "-0.02em",
+                lineHeight: 1.18,
                 color: C.paper,
                 textWrap: "balance",
               }}
@@ -276,6 +284,43 @@ export function Contact() {
                 </span>
               </a>
             ))}
+
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 10,
+                marginTop: 2,
+              }}
+            >
+              {SOCIALS.map((social) => (
+                <a
+                  key={social.href}
+                  href={social.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hv-contact"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 9,
+                    background: "rgba(244,243,238,0.06)",
+                    border: "1px solid rgba(244,243,238,0.16)",
+                    borderRadius: 999,
+                    padding: "9px 16px",
+                    color: C.paper,
+                    fontFamily: MONO,
+                    fontSize: 12,
+                    whiteSpace: "nowrap",
+                    transition:
+                      "background 0.22s ease,border-color 0.22s ease,transform 0.22s ease",
+                  }}
+                >
+                  {social.icon}
+                  {social.label}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </div>
